@@ -299,6 +299,101 @@ var client = new MongoClient(connectionString);
 
 // QUERY PROJECT RESULTS
 
+// var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
+
+
+// var emptyFilter = Builders<BsonDocument>.Filter.Empty;
+
+
+// var builder = Builders<BsonDocument>.Filter;
+
+
+// inventoryCollection.DeleteMany(emptyFilter);
+
+// var documents = new[]
+// {
+//     new BsonDocument
+//     {
+//         { "item", "journal" },
+//         { "status", "A" },
+//         { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
+//         { "instock", new BsonArray
+//             {
+//                 new BsonDocument { { "warehouse", "A" }, { "qty", 5 } } }
+//             }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "notebook" },
+//         { "status", "A" },
+//         { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+//         { "instock", new BsonArray
+//             {
+//                 new BsonDocument { { "warehouse", "C" }, { "qty", 5 } } }
+//             }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "paper" },
+//         { "status", "D" },
+//         { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+//         { "instock", new BsonArray
+//             {
+//                 new BsonDocument { { "warehouse", "A" }, { "qty", 60 } } }
+//             }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "planner" },
+//         { "status", "D" },
+//         { "size", new BsonDocument { { "h", 22.85 }, { "w", 30 }, { "uom", "cm" } } },
+//         { "instock", new BsonArray
+//             {
+//                 new BsonDocument { { "warehouse", "A" }, { "qty", 40 } } }
+//             }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "postcard" },
+//         { "status", "A" },
+//         { "size", new BsonDocument { { "h", 10 }, { "w", 15.25 }, { "uom", "cm" } } },
+//         { "instock", new BsonArray
+//             {
+//                 new BsonDocument { { "warehouse", "B" }, { "qty", 15 } },
+//                 new BsonDocument { { "warehouse", "C" }, { "qty", 35 } } }
+//             }
+//     }
+// };
+
+
+// inventoryCollection.InsertMany(documents);
+
+// // filterBuilder.And(filterBuilder.Eq())
+
+
+// var filter = Builders<BsonDocument>.Filter.Eq("status", "A");
+
+
+// //With the exception of the _id field, you cannot combine inclusion and exclusion statements in projection documents.
+
+// // var projection = Builders<BsonDocument>.Projection.Include("item").Include("status").Exclude("_id");
+
+// //return alll but excluded fields
+// // var projection = Builders<BsonDocument>.Projection.Exclude("_id").Exclude("size").Exclude("instock");
+
+// //return specific fields
+// var projection = Builders<BsonDocument>.Projection.Include("item").Include("status").Slice("instock", -1);
+
+// var result = inventoryCollection.Find(filter).Project(projection).ToList();
+
+
+
+// Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+// Console.WriteLine($"There are {result.Count} in this result");
+
+// Query NULL values
+
+
 var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
 
@@ -309,84 +404,35 @@ var builder = Builders<BsonDocument>.Filter;
 
 
 inventoryCollection.DeleteMany(emptyFilter);
-
 var documents = new[]
 {
-    new BsonDocument
-    {
-        { "item", "journal" },
-        { "status", "A" },
-        { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
-        { "instock", new BsonArray
-            {
-                new BsonDocument { { "warehouse", "A" }, { "qty", 5 } } }
-            }
-    },
-    new BsonDocument
-    {
-        { "item", "notebook" },
-        { "status", "A" },
-        { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
-        { "instock", new BsonArray
-            {
-                new BsonDocument { { "warehouse", "C" }, { "qty", 5 } } }
-            }
-    },
-    new BsonDocument
-    {
-        { "item", "paper" },
-        { "status", "D" },
-        { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
-        { "instock", new BsonArray
-            {
-                new BsonDocument { { "warehouse", "A" }, { "qty", 60 } } }
-            }
-    },
-    new BsonDocument
-    {
-        { "item", "planner" },
-        { "status", "D" },
-        { "size", new BsonDocument { { "h", 22.85 }, { "w", 30 }, { "uom", "cm" } } },
-        { "instock", new BsonArray
-            {
-                new BsonDocument { { "warehouse", "A" }, { "qty", 40 } } }
-            }
-    },
-    new BsonDocument
-    {
-        { "item", "postcard" },
-        { "status", "A" },
-        { "size", new BsonDocument { { "h", 10 }, { "w", 15.25 }, { "uom", "cm" } } },
-        { "instock", new BsonArray
-            {
-                new BsonDocument { { "warehouse", "B" }, { "qty", 15 } },
-                new BsonDocument { { "warehouse", "C" }, { "qty", 35 } } }
-            }
-    }
+    new BsonDocument { { "_id", 1 }, { "item", BsonNull.Value } },
+    new BsonDocument { { "_id", 2 } }
 };
 
 
 inventoryCollection.InsertMany(documents);
 
-// filterBuilder.And(filterBuilder.Eq())
+
+// match any document with a field called "item" and value not equal to null
+// var filter = Builders<BsonDocument>.Filter.Ne("item", BsonNull.Value);
+
+// matches only documents that contain the item field with a null value
+// var filter = Builders<BsonDocument>.Filter.Type("item", BsonType.Null);
 
 
-var filter = Builders<BsonDocument>.Filter.Eq("status", "A");
+//Documents missing the field 'item'
+var filter = Builders<BsonDocument>.Filter.Exists("item", false);
 
 
-//With the exception of the _id field, you cannot combine inclusion and exclusion statements in projection documents.
 
-// var projection = Builders<BsonDocument>.Projection.Include("item").Include("status").Exclude("_id");
-
-//return alll but excluded fields
-// var projection = Builders<BsonDocument>.Projection.Exclude("_id").Exclude("size").Exclude("instock");
-
-//return specific fields
-var projection = Builders<BsonDocument>.Projection.Include("item").Include("status").Slice("instock", -1);
-
-var result = inventoryCollection.Find(filter).Project(projection).ToList();
+var result = inventoryCollection.Find(filter).ToList();
 
 Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 Console.WriteLine($"There are {result.Count} in this result");
 
+
+
+//Set read concern for snapshots
+var snapshotClient = client.WithReadConcern(ReadConcern.Snapshot);
 
