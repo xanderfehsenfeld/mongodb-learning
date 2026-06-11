@@ -394,24 +394,24 @@ var client = new MongoClient(connectionString);
 // Query NULL values
 
 
-var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
+// var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
 
-var emptyFilter = Builders<BsonDocument>.Filter.Empty;
+// var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
 
-var builder = Builders<BsonDocument>.Filter;
+// var builder = Builders<BsonDocument>.Filter;
 
 
-inventoryCollection.DeleteMany(emptyFilter);
-var documents = new[]
-{
-    new BsonDocument { { "_id", 1 }, { "item", BsonNull.Value } },
-    new BsonDocument { { "_id", 2 } }
-};
+// inventoryCollection.DeleteMany(emptyFilter);
+// var documents = new[]
+// {
+//     new BsonDocument { { "_id", 1 }, { "item", BsonNull.Value } },
+//     new BsonDocument { { "_id", 2 } }
+// };
 
 
-inventoryCollection.InsertMany(documents);
+// inventoryCollection.InsertMany(documents);
 
 
 // match any document with a field called "item" and value not equal to null
@@ -422,17 +422,190 @@ inventoryCollection.InsertMany(documents);
 
 
 //Documents missing the field 'item'
-var filter = Builders<BsonDocument>.Filter.Exists("item", false);
+// var filter = Builders<BsonDocument>.Filter.Exists("item", false);
 
 
 
-var result = inventoryCollection.Find(filter).ToList();
+// var result = inventoryCollection.Find(filter).ToList();
+
+// Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+// Console.WriteLine($"There are {result.Count} in this result");
+
+
+
+// //Set read concern for snapshots
+// var snapshotClient = client.WithReadConcern(ReadConcern.Snapshot);
+
+
+
+//UPDATE
+
+
+// var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
+
+
+// var emptyFilter = Builders<BsonDocument>.Filter.Empty;
+
+
+// var builder = Builders<BsonDocument>.Filter;
+
+
+// inventoryCollection.DeleteMany(emptyFilter);
+// var documents = new[]
+// {
+//     new BsonDocument
+//     {
+//         { "item", "canvas" },
+//         { "qty", 100 },
+//         { "size", new BsonDocument { { "h", 28 }, { "w", 35.5 }, { "uom", "cm" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "journal" },
+//         { "qty", 25 },
+//         { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "mat" },
+//         { "qty", 85 },
+//         { "size", new BsonDocument { { "h", 27.9 }, { "w", 35.5 }, { "uom", "cm" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "mousepad" },
+//         { "qty", 25 },
+//         { "size", new BsonDocument { { "h", 19 }, { "w", 22.85 }, { "uom", "cm" } } },
+//         { "status", "P" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "notebook" },
+//         { "qty", 50 },
+//         { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+//         { "status", "P" } },
+//     new BsonDocument
+//     {
+//         { "item", "paper" },
+//         { "qty", 100 },
+//         { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+//         { "status", "D" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "planner" },
+//         { "qty", 75 },
+//         { "size", new BsonDocument { { "h", 22.85 }, { "w", 30 }, { "uom", "cm" } } },
+//         { "status", "D" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "postcard" },
+//         { "qty", 45 },
+//         { "size", new BsonDocument { { "h", 10 }, { "w", 15.25 }, { "uom", "cm" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "sketchbook" },
+//         { "qty", 80 },
+//         { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "sketch pad" },
+//         { "qty", 95 },
+//         { "size", new BsonDocument { { "h", 22.85 }, { "w", 30.5 }, { "uom", "cm" } } }, { "status", "A" } },
+// };
+
+
+// inventoryCollection.InsertMany(documents);
+
+// //Update the first document which is paper
+// // var filter = Builders<BsonDocument>.Filter.Eq("item", "paper");
+// // var update = Builders<BsonDocument>.Update.Set("size.uom", "cm").Set("status", "P").CurrentDate("lastModified");
+// // var result = inventoryCollection.UpdateOne(filter, update);
+
+
+// //Update every document which has quantity larger than 50
+// var filter = Builders<BsonDocument>.Filter.Lt("qty", 50);
+// var update = Builders<BsonDocument>.Update.Set("size.uom", "in").Set("status", "P").CurrentDate("lastModified");
+// var result = inventoryCollection.UpdateMany(filter, update);
+
+// Console.WriteLine($"Was the result ackownledged? {result.IsAcknowledged}");
+// Console.WriteLine($"There are {result.ModifiedCount} documents modified in this result");
+
+
+
+
+//Update with aggregate example
+
+
+var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
+
+
+var emptyFilter = Builders<BsonDocument>.Filter.Empty;
+
+
+var builder = Builders<BsonDocument>.Filter;
+
+
+
+inventoryCollection.DeleteMany(emptyFilter);
+var documents = new[]
+ {
+ new BsonDocument {  { "_id", 1},
+ { "test1", 95},
+ { "test2", 92},{ "test3", 90},{ "modified", DateTime.Parse("01/05/2020") }
+
+
+ },
+
+  new BsonDocument {  { "_id", 2},
+ { "test1", 98},
+ { "test2", 100},{ "test3", 102},{ "modified", DateTime.Parse("01/05/2020") }
+
+
+ },
+  new BsonDocument {  { "_id", 3},
+ { "test1", 95},
+ { "test2", 110},{ "modified", DateTime.Parse("01/04/2020") }
+
+
+ }
+
+};
+
+
+inventoryCollection.InsertMany(documents);
+
+
+
+
+
+var filter = builder.Eq("_id", 1);
+var updateOperation = Builders<BsonDocument>.Update.Set("test3", 98).CurrentDate("modified");
+inventoryCollection.UpdateOne(filter, updateOperation);
+
+
+
+
+var result = inventoryCollection.Find(emptyFilter).ToList();
 
 Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
-Console.WriteLine($"There are {result.Count} in this result");
+Console.WriteLine($"There are {result.Count} in this collection.");
+//recreate thh following in C#
 
-
-
-//Set read concern for snapshots
-var snapshotClient = client.WithReadConcern(ReadConcern.Snapshot);
+// db.students2.updateMany( {},
+//   [
+//     { $replaceRoot: { newRoot:
+//        { $mergeObjects: [ { quiz1: 0, quiz2: 0, test1: 0, test2: 0 }, "$$ROOT" ] }
+//     } },
+//     { $set: { modified: "$$NOW"}  }
+//   ]
+// )
 
