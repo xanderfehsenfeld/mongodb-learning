@@ -236,6 +236,69 @@ var client = new MongoClient(connectionString);
 
 
 // QUERY ARRAYS
+// var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
+
+
+// var emptyFilter = Builders<BsonDocument>.Filter.Empty;
+
+
+// var builder = Builders<BsonDocument>.Filter;
+
+
+// inventoryCollection.DeleteMany(emptyFilter);
+
+// var documents = new[]
+// {
+//     new BsonDocument
+//     {
+//         { "item", "journal" },
+//         { "qty", 25 },
+//         { "tags", new BsonArray { "blank", "red" } },
+//         { "dim_cm", new BsonArray { 14, 21 } }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "notebook" },
+//         { "qty", 50 },
+//         { "tags", new BsonArray { "red", "blank" } },
+//         { "dim_cm", new BsonArray { 14, 21 } }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "paper" },
+//         { "qty", 100 },
+//         { "tags", new BsonArray { "red", "blank", "plain" } },
+//         { "dim_cm", new BsonArray { 14, 21 } }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "planner" },
+//         { "qty", 75 },
+//         { "tags", new BsonArray { "blank", "red" } },
+//         { "dim_cm", new BsonArray { 22.85, 30 } }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "postcard" },
+//         { "qty", 45 },
+//         { "tags", new BsonArray { "blue" } },
+//         { "dim_cm", new BsonArray { 10, 15.25 } }
+//     }
+// };
+// inventoryCollection.InsertMany(documents);
+
+// // filterBuilder.And(filterBuilder.Eq())
+
+
+// var filter = builder.SizeGt("tags", 2);
+
+// var result = inventoryCollection.Find(filter).ToList();
+
+// Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+// Console.WriteLine($"There are {result.Count} in this result");
+
+// QUERY PROJECT RESULTS
+
 var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
 
@@ -252,48 +315,78 @@ var documents = new[]
     new BsonDocument
     {
         { "item", "journal" },
-        { "qty", 25 },
-        { "tags", new BsonArray { "blank", "red" } },
-        { "dim_cm", new BsonArray { 14, 21 } }
+        { "status", "A" },
+        { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
+        { "instock", new BsonArray
+            {
+                new BsonDocument { { "warehouse", "A" }, { "qty", 5 } } }
+            }
     },
     new BsonDocument
     {
         { "item", "notebook" },
-        { "qty", 50 },
-        { "tags", new BsonArray { "red", "blank" } },
-        { "dim_cm", new BsonArray { 14, 21 } }
+        { "status", "A" },
+        { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+        { "instock", new BsonArray
+            {
+                new BsonDocument { { "warehouse", "C" }, { "qty", 5 } } }
+            }
     },
     new BsonDocument
     {
         { "item", "paper" },
-        { "qty", 100 },
-        { "tags", new BsonArray { "red", "blank", "plain" } },
-        { "dim_cm", new BsonArray { 14, 21 } }
+        { "status", "D" },
+        { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+        { "instock", new BsonArray
+            {
+                new BsonDocument { { "warehouse", "A" }, { "qty", 60 } } }
+            }
     },
     new BsonDocument
     {
         { "item", "planner" },
-        { "qty", 75 },
-        { "tags", new BsonArray { "blank", "red" } },
-        { "dim_cm", new BsonArray { 22.85, 30 } }
+        { "status", "D" },
+        { "size", new BsonDocument { { "h", 22.85 }, { "w", 30 }, { "uom", "cm" } } },
+        { "instock", new BsonArray
+            {
+                new BsonDocument { { "warehouse", "A" }, { "qty", 40 } } }
+            }
     },
     new BsonDocument
     {
         { "item", "postcard" },
-        { "qty", 45 },
-        { "tags", new BsonArray { "blue" } },
-        { "dim_cm", new BsonArray { 10, 15.25 } }
+        { "status", "A" },
+        { "size", new BsonDocument { { "h", 10 }, { "w", 15.25 }, { "uom", "cm" } } },
+        { "instock", new BsonArray
+            {
+                new BsonDocument { { "warehouse", "B" }, { "qty", 15 } },
+                new BsonDocument { { "warehouse", "C" }, { "qty", 35 } } }
+            }
     }
 };
+
+
 inventoryCollection.InsertMany(documents);
 
 // filterBuilder.And(filterBuilder.Eq())
 
 
-var filter = builder.SizeGt("tags", 2);
+var filter = Builders<BsonDocument>.Filter.Eq("status", "A");
 
-var result = inventoryCollection.Find(filter).ToList();
+
+//With the exception of the _id field, you cannot combine inclusion and exclusion statements in projection documents.
+
+// var projection = Builders<BsonDocument>.Projection.Include("item").Include("status").Exclude("_id");
+
+//return alll but excluded fields
+// var projection = Builders<BsonDocument>.Projection.Exclude("_id").Exclude("size").Exclude("instock");
+
+//return specific fields
+var projection = Builders<BsonDocument>.Projection.Include("item").Include("status").Slice("instock", -1);
+
+var result = inventoryCollection.Find(filter).Project(projection).ToList();
 
 Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 Console.WriteLine($"There are {result.Count} in this result");
+
 
