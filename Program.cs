@@ -175,6 +175,67 @@ var client = new MongoClient(connectionString);
 
 
 // NESTED QUERY EXAMPLES
+// var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
+
+
+// var emptyFilter = Builders<BsonDocument>.Filter.Empty;
+
+
+// var builder = Builders<BsonDocument>.Filter;
+
+
+// inventoryCollection.DeleteMany(emptyFilter);
+
+
+// var documents = new[]
+// {
+//     new BsonDocument
+//     {
+//         { "item", "journal" },
+//         { "qty", 25 },
+//         { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "notebook" },
+//         { "qty", 50 },
+//         { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+//         { "status", "A" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "paper" },
+//         { "qty", 100 },
+//         { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
+//         { "status", "D" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "planner" },
+//         { "qty", 75 },
+//         { "size", new BsonDocument { { "h", 22.85 }, { "w", 30 }, { "uom", "cm" } } },
+//         { "status", "D" }
+//     },
+//     new BsonDocument
+//     {
+//         { "item", "postcard" },
+//         { "qty", 45 },
+//         { "size", new BsonDocument { { "h", 10 }, { "w", 15.25 }, { "uom", "cm" } } },
+//         { "status", "A" } },
+// };
+// inventoryCollection.InsertMany(documents);
+
+// // filterBuilder.And(filterBuilder.Eq())
+
+// var filter = builder.And(builder.Lt("size.h", 15), builder.Eq("size.uom", "in"), builder.Eq("status", "D"));
+// var result = inventoryCollection.Find(filter).ToList();
+
+// Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
+// Console.WriteLine($"There are {result.Count} in this result");
+
+
+// QUERY ARRAYS
 var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
 
@@ -186,50 +247,53 @@ var builder = Builders<BsonDocument>.Filter;
 
 inventoryCollection.DeleteMany(emptyFilter);
 
-
 var documents = new[]
 {
     new BsonDocument
     {
         { "item", "journal" },
         { "qty", 25 },
-        { "size", new BsonDocument { { "h", 14 }, { "w", 21 }, { "uom", "cm" } } },
-        { "status", "A" }
+        { "tags", new BsonArray { "blank", "red" } },
+        { "dim_cm", new BsonArray { 14, 21 } }
     },
     new BsonDocument
     {
         { "item", "notebook" },
         { "qty", 50 },
-        { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
-        { "status", "A" }
+        { "tags", new BsonArray { "red", "blank" } },
+        { "dim_cm", new BsonArray { 14, 21 } }
     },
     new BsonDocument
     {
         { "item", "paper" },
         { "qty", 100 },
-        { "size", new BsonDocument { { "h", 8.5 }, { "w", 11 }, { "uom", "in" } } },
-        { "status", "D" }
+        { "tags", new BsonArray { "red", "blank", "plain" } },
+        { "dim_cm", new BsonArray { 14, 21 } }
     },
     new BsonDocument
     {
         { "item", "planner" },
         { "qty", 75 },
-        { "size", new BsonDocument { { "h", 22.85 }, { "w", 30 }, { "uom", "cm" } } },
-        { "status", "D" }
+        { "tags", new BsonArray { "blank", "red" } },
+        { "dim_cm", new BsonArray { 22.85, 30 } }
     },
     new BsonDocument
     {
         { "item", "postcard" },
         { "qty", 45 },
-        { "size", new BsonDocument { { "h", 10 }, { "w", 15.25 }, { "uom", "cm" } } },
-        { "status", "A" } },
+        { "tags", new BsonArray { "blue" } },
+        { "dim_cm", new BsonArray { 10, 15.25 } }
+    }
 };
 inventoryCollection.InsertMany(documents);
 
 // filterBuilder.And(filterBuilder.Eq())
 
-var filter = builder.And(builder.Lt("size.h", 15), builder.Eq("size.uom", "in"), builder.Eq("status", "D"));
+
+var filter = builder.SizeGt("tags", 2);
+
 var result = inventoryCollection.Find(filter).ToList();
 
 Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 Console.WriteLine($"There are {result.Count} in this result");
+
