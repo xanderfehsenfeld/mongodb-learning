@@ -1,21 +1,23 @@
-﻿using MongoDB.Driver;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.IO;
+using MongoDB.Driver;
+
+DotNetEnv.Env.Load("./atlas-credentials.env");
+
 var connectionString = Environment.GetEnvironmentVariable("MONGODB_URI");
 if (connectionString == null)
 {
-    Console.WriteLine("You must set your 'MONGODB_URI' environment variable. To learn how to set it, see https://www.mongodb.com/docs/drivers/csharp/current/get-started/create-connection-string");
+    Console.WriteLine(
+        "You must set your 'MONGODB_URI' environment variable. To learn how to set it, see https://www.mongodb.com/docs/drivers/csharp/current/get-started/create-connection-string"
+    );
     Environment.Exit(0);
 }
 var client = new MongoClient(connectionString);
-
-
 
 // var collection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("movies");
 // var filter = Builders<BsonDocument>.Filter.Eq("title", "Back to the Future");
 // var document = collection.Find(filter).First();
 // Console.WriteLine(document.ToJson(new JsonWriterSettings { Indent = true }));
-
 
 /* Insert 1 */
 
@@ -30,10 +32,8 @@ var client = new MongoClient(connectionString);
 // var collection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 // collection.InsertOne(document);
 
-
 // var emptyFilter = Builders<BsonDocument>.Filter.Eq("item", "canvas");
 // var canvas = collection.Find(emptyFilter).First();
-
 
 //https://www.mongodb.com/docs/manual/tutorial/insert-documents/
 
@@ -65,11 +65,9 @@ var client = new MongoClient(connectionString);
 
 // collection.InsertMany(documents);
 
-
 // var canvas = collection.Find({})
 
 // Console.WriteLine(canvas.ToJson(new JsonWriterSettings { Indent = true }));
-
 
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 // var result = collection.Find(emptyFilter).ToList();
@@ -77,12 +75,8 @@ var client = new MongoClient(connectionString);
 // Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 // Console.WriteLine($"There are {result.Count} in this collection.");
 
-
-
-
 //https://www.mongodb.com/docs/manual/tutorial/query-documents/
 // var collection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
-
 
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
@@ -136,28 +130,20 @@ var client = new MongoClient(connectionString);
 //     builder.Eq("status", "A"),
 //     builder.Or(builder.Lt("qty", 30), builder.Regex("item",
 
-
 //     new BsonRegularExpression("^p"))
 
-
 //     ));
-
 
 // var result = collection.Find(filter).ToList();
 
 // Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 // Console.WriteLine($"There are {result.Count} in this result");
 
-
-
 /* Movies query */
-
 
 // var movies = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("movies");
 
-
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
-
 
 // var builder = Builders<BsonDocument>.Filter;
 
@@ -165,27 +151,19 @@ var client = new MongoClient(connectionString);
 
 // var filter = builder.Eq("year", 1924);
 
-
 // var moviesFrom1924 = movies.Find(filter).ToList();
 
 // Console.WriteLine(moviesFrom1924.ToJson(new JsonWriterSettings { Indent = true }));
 // Console.WriteLine($"There are {moviesFrom1924.Count} in this result");
 
-
-
-
 // NESTED QUERY EXAMPLES
 // var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
-
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
-
 
 // var builder = Builders<BsonDocument>.Filter;
 
-
 // inventoryCollection.DeleteMany(emptyFilter);
-
 
 // var documents = new[]
 // {
@@ -234,16 +212,12 @@ var client = new MongoClient(connectionString);
 // Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 // Console.WriteLine($"There are {result.Count} in this result");
 
-
 // QUERY ARRAYS
 // var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
-
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
-
 // var builder = Builders<BsonDocument>.Filter;
-
 
 // inventoryCollection.DeleteMany(emptyFilter);
 
@@ -289,7 +263,6 @@ var client = new MongoClient(connectionString);
 
 // // filterBuilder.And(filterBuilder.Eq())
 
-
 // var filter = builder.SizeGt("tags", 2);
 
 // var result = inventoryCollection.Find(filter).ToList();
@@ -301,12 +274,9 @@ var client = new MongoClient(connectionString);
 
 // var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
-
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
-
 // var builder = Builders<BsonDocument>.Filter;
-
 
 // inventoryCollection.DeleteMany(emptyFilter);
 
@@ -365,14 +335,11 @@ var client = new MongoClient(connectionString);
 //     }
 // };
 
-
 // inventoryCollection.InsertMany(documents);
 
 // // filterBuilder.And(filterBuilder.Eq())
 
-
 // var filter = Builders<BsonDocument>.Filter.Eq("status", "A");
-
 
 // //With the exception of the _id field, you cannot combine inclusion and exclusion statements in projection documents.
 
@@ -386,22 +353,16 @@ var client = new MongoClient(connectionString);
 
 // var result = inventoryCollection.Find(filter).Project(projection).ToList();
 
-
-
 // Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 // Console.WriteLine($"There are {result.Count} in this result");
 
 // Query NULL values
 
-
 // var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
-
 
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
-
 // var builder = Builders<BsonDocument>.Filter;
-
 
 // inventoryCollection.DeleteMany(emptyFilter);
 // var documents = new[]
@@ -410,9 +371,7 @@ var client = new MongoClient(connectionString);
 //     new BsonDocument { { "_id", 2 } }
 // };
 
-
 // inventoryCollection.InsertMany(documents);
-
 
 // match any document with a field called "item" and value not equal to null
 // var filter = Builders<BsonDocument>.Filter.Ne("item", BsonNull.Value);
@@ -420,35 +379,24 @@ var client = new MongoClient(connectionString);
 // matches only documents that contain the item field with a null value
 // var filter = Builders<BsonDocument>.Filter.Type("item", BsonType.Null);
 
-
 //Documents missing the field 'item'
 // var filter = Builders<BsonDocument>.Filter.Exists("item", false);
-
-
 
 // var result = inventoryCollection.Find(filter).ToList();
 
 // Console.WriteLine(result.ToJson(new JsonWriterSettings { Indent = true }));
 // Console.WriteLine($"There are {result.Count} in this result");
 
-
-
 // //Set read concern for snapshots
 // var snapshotClient = client.WithReadConcern(ReadConcern.Snapshot);
 
-
-
 //UPDATE
-
 
 // var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
 
-
 // var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
-
 // var builder = Builders<BsonDocument>.Filter;
-
 
 // inventoryCollection.DeleteMany(emptyFilter);
 // var documents = new[]
@@ -522,14 +470,12 @@ var client = new MongoClient(connectionString);
 //         { "size", new BsonDocument { { "h", 22.85 }, { "w", 30.5 }, { "uom", "cm" } } }, { "status", "A" } },
 // };
 
-
 // inventoryCollection.InsertMany(documents);
 
 // //Update the first document which is paper
 // // var filter = Builders<BsonDocument>.Filter.Eq("item", "paper");
 // // var update = Builders<BsonDocument>.Update.Set("size.uom", "cm").Set("status", "P").CurrentDate("lastModified");
 // // var result = inventoryCollection.UpdateOne(filter, update);
-
 
 // //Update every document which has quantity larger than 50
 // var filter = Builders<BsonDocument>.Filter.Lt("qty", 50);
@@ -539,60 +485,49 @@ var client = new MongoClient(connectionString);
 // Console.WriteLine($"Was the result ackownledged? {result.IsAcknowledged}");
 // Console.WriteLine($"There are {result.ModifiedCount} documents modified in this result");
 
-
-
-
 //Update with aggregate example
 
-
-var inventoryCollection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("inventory");
-
+var inventoryCollection = client
+    .GetDatabase("sample_mflix")
+    .GetCollection<BsonDocument>("inventory");
 
 var emptyFilter = Builders<BsonDocument>.Filter.Empty;
 
-
 var builder = Builders<BsonDocument>.Filter;
-
-
 
 inventoryCollection.DeleteMany(emptyFilter);
 var documents = new[]
- {
- new BsonDocument {  { "_id", 1},
- { "test1", 95},
- { "test2", 92},{ "test3", 90},{ "modified", DateTime.Parse("01/05/2020") }
-
-
- },
-
-  new BsonDocument {  { "_id", 2},
- { "test1", 98},
- { "test2", 100},{ "test3", 102},{ "modified", DateTime.Parse("01/05/2020") }
-
-
- },
-  new BsonDocument {  { "_id", 3},
- { "test1", 95},
- { "test2", 110},{ "modified", DateTime.Parse("01/04/2020") }
-
-
- }
-
+{
+    new BsonDocument
+    {
+        { "_id", 1 },
+        { "test1", 95 },
+        { "test2", 92 },
+        { "test3", 90 },
+        { "modified", DateTime.Parse("01/05/2020") },
+    },
+    new BsonDocument
+    {
+        { "_id", 2 },
+        { "test1", 98 },
+        { "test2", 100 },
+        { "test3", 102 },
+        { "modified", DateTime.Parse("01/05/2020") },
+    },
+    new BsonDocument
+    {
+        { "_id", 3 },
+        { "test1", 95 },
+        { "test2", 110 },
+        { "modified", DateTime.Parse("01/04/2020") },
+    },
 };
 
-
 inventoryCollection.InsertMany(documents);
-
-
-
-
 
 var filter = builder.Eq("_id", 1);
 var updateOperation = Builders<BsonDocument>.Update.Set("test3", 98).CurrentDate("modified");
 inventoryCollection.UpdateOne(filter, updateOperation);
-
-
-
 
 var result = inventoryCollection.Find(emptyFilter).ToList();
 
@@ -608,4 +543,3 @@ Console.WriteLine($"There are {result.Count} in this collection.");
 //     { $set: { modified: "$$NOW"}  }
 //   ]
 // )
-
